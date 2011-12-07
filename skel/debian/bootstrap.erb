@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ ! $UID -eq 0 ]; then
+  sudo $0
+  exit
+fi
+
+apt-get update
+apt-get -y upgrade
+apt-get -y dist-upgrade
+apt-get install -y rubygems1.8 puppet
+apt-get remove -y puppet facter
+gem install puppet --no-ri --no-rdoc
+./apply
+shutdown -r now
+

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ ! $UID -eq 0 ]; then
+  sudo $0 $1
+  exit
+fi
+
+echo $1 > /etc/hostname
+cat /etc/hosts | sed "s#^\\(127.0.0.1\\)\\(.*\\)\$#\\1 $1 \\2#g" > /etc/hosts.tmp
+mv /etc/hosts.tmp /etc/hosts
+hostname $1
+
+echo "Server renamed to $1"
+

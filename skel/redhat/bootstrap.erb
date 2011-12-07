@@ -1,0 +1,33 @@
+#!/bin/bash
+
+base_dir=<%= base_dir %>
+
+if [ ! -f ${base_dir}/ruby-base/bin/ruby ]; then
+  echo "Installing Ruby to ${base_dir}/ruby-base..."
+  mkdir -p ${base_dir}/tmp
+  cd ${base_dir}/tmp
+
+  RUBY=ftp://ftp.ruby-lang.org/pub/ruby/ruby-1.9.2-p290.tar.bz2
+  RUBY_FILENAME=${RUBY##*/}
+  RUBY_VERSION=${RUBY_FILENAME%%.tar.bz2}
+  curl $RUBY > $RUBY_FILENAME
+  rm -Rf $RUBY_VERSION
+  tar jxvf $RUBY_FILENAME
+  mv $RUBY_VERSION "$RUBY_VERSION-base"
+
+  cd "$RUBY_VERSION-base"
+
+  ./configure --prefix=${base_dir}/ruby-base --disable-pthread
+  make
+  make install
+fi
+
+PATH=${base_dir}/ruby-base/bin:$PATH
+
+if [ ! -f ${base_dir}/ruby-base/bin/puppet ]; then
+  echo "Installing Puppet..."
+  gem install puppet
+fi
+
+mkdir ~/.puppet
+./apply
