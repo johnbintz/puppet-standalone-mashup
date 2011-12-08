@@ -4,7 +4,7 @@ Puppet::Type.type(:make_and_install).provide(:action) do
   desc "Configure a program to install"
 
   def create
-    system %{bash -c 'cd #{@resource[:build_path]} ; make && make install'}
+    system %{bash -c '#{path} cd #{@resource[:build_path]} ; make && make install'}
     File.symlink(@resource[:install_path], symlink_path)
   end
 
@@ -20,5 +20,9 @@ Puppet::Type.type(:make_and_install).provide(:action) do
   private
   def symlink_path
     File.join(File.dirname(@resource[:install_path]), @resource[:name])
+  end
+
+  def path
+    @resource[:path].empty? ? '' : "export PATH=#{@resource[:path]}:$PATH ; "
   end
 end

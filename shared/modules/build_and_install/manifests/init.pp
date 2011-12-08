@@ -23,6 +23,7 @@ define build_and_install($version, $source, $path = '', $configure = '') {
   make_and_install { $name:
     build_path => $build_path,
     install_path => $install_path,
+    path => $path,
     require => Configure[$name],
     ensure => present
   }

@@ -18,5 +18,9 @@ Puppet::Type.newtype(:make_and_install) do
   newparam(:options) do
     desc "Options to build the software"
   end
+
+  newparam(:path) do
+    desc "Binary path to add"
+  end
 end
 

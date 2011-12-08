@@ -20,6 +20,10 @@ module Puppet
       def sbin_path(install_path, name)
         File.join(install_path, name, 'sbin')
       end
+
+      def pid_path(pid_path, name)
+        File.join(pid_path, "#{name}.pid")
+      end
     end
   end
 end
@@ -27,3 +31,4 @@ end
 class Puppet::Parser::Scope
   include Puppet::Modules::CommonDirectories
 end
+
