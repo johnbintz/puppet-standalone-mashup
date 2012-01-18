@@ -1,5 +1,6 @@
 #!/bin/bash
 
+pwd=$PWD
 base_dir=<%= base_dir %>
 
 if [ ! -f ${base_dir}/ruby-base/bin/ruby ]; then
@@ -20,6 +21,11 @@ if [ ! -f ${base_dir}/ruby-base/bin/ruby ]; then
   ./configure --prefix=${base_dir}/ruby-base --disable-pthread
   make
   make install
+
+  cd ext/openssl
+  PATH=${base_dir}/ruby-base/bin:$PATH ruby extconf.rb
+  make
+  make install
 fi
 
 PATH=${base_dir}/ruby-base/bin:$PATH
@@ -29,5 +35,6 @@ if [ ! -f ${base_dir}/ruby-base/bin/puppet ]; then
   gem install puppet
 fi
 
-mkdir ~/.puppet
+mkdir -p ~/.puppet
+cd /tmp/puppet
 ./apply

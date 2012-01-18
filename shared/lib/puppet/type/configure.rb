@@ -19,6 +19,10 @@ Puppet::Type.newtype(:configure) do
     desc "Options to build the software"
   end
 
+  newparam(:config_status) do
+    desc "Relative location of config.status"
+  end
+
   newparam(:path) do
     desc "Path for executables"
   end

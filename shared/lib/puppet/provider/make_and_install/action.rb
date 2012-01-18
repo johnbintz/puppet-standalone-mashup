@@ -5,7 +5,9 @@ Puppet::Type.type(:make_and_install).provide(:action) do
 
   def create
     system %{bash -c '#{path} cd #{@resource[:build_path]} ; make && make install'}
-    File.symlink(@resource[:install_path], symlink_path)
+
+    FileUtils.rm_rf symlink_path
+    FileUtils.ln_sf(@resource[:install_path], symlink_path)
   end
 
   def destroy

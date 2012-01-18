@@ -2,7 +2,7 @@ Puppet::Type.type(:gem).provide(:install) do
   desc "Install a Ruby Gem"
 
   def create
-    gem_command('install --no-ri --no-rdoc')
+    system gem_command('install --no-ri --no-rdoc')
   end
 
   def destroy
@@ -25,7 +25,7 @@ Puppet::Type.type(:gem).provide(:install) do
 
   def gem_command(what)
     command = %{bash -c 'PATH=#{@resource[:path]} gem #{what} #{@resource[:name]} #{version}'}
-    %x{#{command}}
+    command
   end
 end
 

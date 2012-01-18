@@ -10,5 +10,9 @@ cat /etc/hosts | sed "s#^\\(127.0.0.1\\)\\(.*\\)\$#\\1 $1 \\2#g" > /etc/hosts.tm
 mv /etc/hosts.tmp /etc/hosts
 hostname $1
 
+if [ -f /etc/sysconfig/network ]; then
+  echo -e "NETWORKING=yes\nHOSTNAME=$1\n" > /etc/sysconfig/network
+fi
+
 echo "Server renamed to $1"
 

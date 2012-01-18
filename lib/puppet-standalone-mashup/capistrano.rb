@@ -49,6 +49,7 @@ Capistrano::Configuration.instance.load do
   task :rename do
     hostname = Capistrano::CLI.ui.ask("Hostname: ")
 
+    top.copy_skel
     run "cd #{puppet_dir} && #{sudo} ./rename #{hostname}"
   end
 

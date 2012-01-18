@@ -1,4 +1,4 @@
-define build_and_install($version, $source, $path = '', $configure = '') {
+define build_and_install($version, $source, $path = '', $configure = '', $config_status = 'config.status') {
   $full_source = inline_template($source)
 
   $build_path   = build_path($name, $version)
@@ -17,6 +17,7 @@ define build_and_install($version, $source, $path = '', $configure = '') {
     options => $configure,
     path => $path,
     require => Download_and_unpack[$name],
+    config_status => $config_status,
     ensure => present
   }
 
