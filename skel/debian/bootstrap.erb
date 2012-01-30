@@ -5,12 +5,18 @@ if [ ! $UID -eq 0 ]; then
   exit
 fi
 
-apt-get update
-apt-get -y upgrade
-apt-get -y dist-upgrade
-apt-get install -y rubygems1.8 puppet
-apt-get remove -y puppet facter
+export DEBIAN_FRONTEND=noninteractive
+export PAGER=cat
+
+apt-get --force-yes update
+apt-get --force-yes -y upgrade
+apt-get --force-yes -y dist-upgrade
+apt-get install --force-yes -y rubygems1.8 puppet
+apt-get remove --force-yes -y puppet facter
+
 gem install puppet --no-ri --no-rdoc
+
 ./apply
+
 shutdown -r now
 

@@ -18,7 +18,7 @@ Capistrano::Configuration.instance.load do
   _cset(:use_sudo) { true }
 
   @dir_made = false
-  
+
   def sudo
     use_sudo ? "sudo -p 'sudo password: '" : ""
   end
@@ -47,7 +47,7 @@ Capistrano::Configuration.instance.load do
 
   desc "Rename the server"
   task :rename do
-    hostname = Capistrano::CLI.ui.ask("Hostname: ")
+    hostname = fetch(:hostname) || Capistrano::CLI.ui.ask("Hostname: ")
 
     top.copy_skel
     run "cd #{puppet_dir} && #{sudo} ./rename #{hostname}"
@@ -57,7 +57,11 @@ Capistrano::Configuration.instance.load do
   task :copy do
     top.ensure_puppet_dir
 
-    Dir["*"].each { |file| top.upload file, File.join(puppet_dir, file) }
+    Dir["*"].each do |file|
+      if !%w{vbox}.include?(file)
+        top.upload file, File.join(puppet_dir, file)
+      end
+    end
   end
 
   desc "Copy skel files to remote server"
