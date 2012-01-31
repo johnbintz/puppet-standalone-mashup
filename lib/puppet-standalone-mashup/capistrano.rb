@@ -16,6 +16,7 @@ Capistrano::Configuration.instance.load do
   _cset(:base_dir) { '/usr/local' }
   _cset(:rename_server) { true }
   _cset(:use_sudo) { true }
+  _cset(:additional_modules) { [] }
 
   @dir_made = false
 
@@ -83,7 +84,11 @@ Capistrano::Configuration.instance.load do
   task :copy_shared do
     top.ensure_puppet_dir
 
-    top.upload PuppetStandaloneMashup::BASE.join('shared').to_s, File.join(puppet_dir, 'shared')
+    run "mkdir -p #{puppet_dir}/shared/additional-modules"
+
+    (%w{lib modules} + additional_modules.collect { |dir| "additional-modules/#{dir}" }).each do |dir|
+      top.upload PuppetStandaloneMashup::BASE.join('shared', dir).to_s, File.join(puppet_dir, 'shared', dir)
+    end
   end
 
   desc "Ensure Puppet target dir exists"

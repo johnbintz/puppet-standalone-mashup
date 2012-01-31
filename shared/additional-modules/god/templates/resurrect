@@ -1,0 +1,8 @@
+#!/bin/sh
+
+sudo killall god
+sudo killall nginx
+sudo killall thin
+sudo killall php5-fpm
+sudo service god start
+
