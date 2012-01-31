@@ -13,7 +13,10 @@ end
 Capistrano::Configuration.instance.load do
   _cset(:puppet_dir) { '/tmp/puppet' }
   _cset(:additional_puppet_bin_path) { nil }
+
   _cset(:base_dir) { '/usr/local' }
+  _cset(:src_dir) { '/usr/src' }
+
   _cset(:rename_server) { true }
   _cset(:use_sudo) { true }
   _cset(:additional_modules) { [] }
@@ -22,6 +25,16 @@ Capistrano::Configuration.instance.load do
 
   def sudo
     use_sudo ? "sudo -p 'sudo password: '" : ""
+  end
+
+  desc "Clear specified source directories"
+  task :clear_source do
+    run "cd #{src_dir} && #{sudo} rm -Rf #{sources}"
+  end
+
+  desc "Clear specified apps"
+  task :clear_apps do
+    run "cd #{base_dir} && #{sudo} rm -Rf #{apps}"
   end
 
   desc "Apply the configuration"
