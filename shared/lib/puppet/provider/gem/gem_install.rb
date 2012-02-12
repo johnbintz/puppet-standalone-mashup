@@ -20,11 +20,22 @@ Puppet::Type.type(:gem).provide(:install) do
     if @resource[:version] && !@resource[:version].empty?
       version = " -v #{@resource[:version]}"
     end
+
     version
   end
 
+  def options
+    options = ''
+
+    if @resource[:options] && !@resource[:options].empty?
+      options = " #{@resource[:options]}"
+    end
+
+    options
+  end
+
   def gem_command(what)
-    command = %{bash -c 'PATH=#{@resource[:path]} gem #{what} #{@resource[:name]} #{version}'}
+    command = %{bash -c 'PATH=#{@resource[:path]} gem #{what} #{@resource[:name]} #{options} #{version}'}.tap { |o| p o }
     command
   end
 end

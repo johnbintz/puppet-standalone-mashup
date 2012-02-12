@@ -14,5 +14,9 @@ Puppet::Type.newtype(:gem) do
   newparam(:path) do
     desc "The binary search path"
   end
+
+  newparam(:options) do
+    desc "Gem install options"
+  end
 end
 

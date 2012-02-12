@@ -11,6 +11,7 @@ class ruby($version) {
   gem { 'bundler':
     require => Build_and_install[$name],
     path => $with_ruby_path,
+    options => '--pre',
     ensure => present
   }
 
