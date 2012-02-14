@@ -43,11 +43,11 @@ God.watch do |w|
   w.interval = 15.seconds
 
   w.start = lambda { system("<%= start %>") }
-  w.start_grace = 15.seconds
+  w.start_grace = 10.seconds
 
   <% if !stop.empty? %>
     w.stop = lambda { system("<%= stop %>") }
-    w.stop_grace = 15.seconds
+    w.stop_grace = 10.seconds
   <% end %>
 
   <% if pid_file %>

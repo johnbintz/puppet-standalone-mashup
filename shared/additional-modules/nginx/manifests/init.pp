@@ -33,7 +33,7 @@ class nginx($version) {
     require => Exec['install-passenger']
   }
 
-  file { [ '/var/log/nginx', $config_path ]:
+  file { $config_path:
     ensure => directory,
     before => God_init[$name]
   }
