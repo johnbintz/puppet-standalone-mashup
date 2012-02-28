@@ -1,4 +1,4 @@
-class nginx($version) {
+class nginx($version, $max_pool_size = 20) {
   gem { 'passenger':
     version => $version,
     path => "${ruby::with_ruby_path}",
@@ -27,6 +27,7 @@ class nginx($version) {
   god_init { $name:
     start => "${sbin_path}/nginx -c ${config_file}",
     stop => "${sbin_path}/nginx -s stop -c ${config_file}",
+    restart => "${sbin_path}/nginx -s reload -c ${config_file}",
     pid_file => $pid_file,
     ensure => present,
     notify => Service['god'],
@@ -50,17 +51,22 @@ class nginx($version) {
 
   file { "${config_path}/fastcgi.conf":
     content => template('nginx/fastcgi.conf'),
+    mode => 644,
     require => File[$config_file]
   }
 
   file { "${config_path}/fastcgi_params":
     content => template('nginx/fastcgi_params'),
+    mode => 644,
     require => File[$config_file]
   }
 
   file { '/var/www': ensure => directory }
 
-  file { $symlink_path: ensure => $install_path }
+  file { $symlink_path:
+    ensure => $install_path,
+    require => Exec['install-passenger']
+  }
 
   file { "${base::install_path}/bin/new-site":
     content => template('nginx/new-site'),

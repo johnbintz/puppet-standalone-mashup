@@ -5,7 +5,6 @@ class ruby($version) {
   build_and_install { $name:
     version => $version,
     source => "http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-<%= version %>.tar.gz",
-    require => Class['base']
   }
 
   gem { 'bundler':
@@ -13,12 +12,6 @@ class ruby($version) {
     path => $with_ruby_path,
     options => '--pre',
     ensure => present
-  }
-
-  bash_rc_d { $name:
-    ensure => present,
-    path => $base::local_path,
-    require => Build_and_install[$name]
   }
 }
 

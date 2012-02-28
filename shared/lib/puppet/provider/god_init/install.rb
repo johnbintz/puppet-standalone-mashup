@@ -4,7 +4,7 @@ Puppet::Type.type(:god_init).provide(:install) do
   desc "Install a God script"
 
   def create
-    File.open(file, 'wb') { |fh| fh.print(ERB.new(config).result(binding)) }
+    File.open(file, 'wb') { |fh| fh.print processed_config }
   end
 
   def destroy
@@ -12,7 +12,11 @@ Puppet::Type.type(:god_init).provide(:install) do
   end
 
   def exists?
-    File.file? file
+    File.file?(file) && File.read(file) == processed_config
+  end
+
+  def processed_config
+    ERB.new(config).result(binding)
   end
 
   private
@@ -28,6 +32,10 @@ Puppet::Type.type(:god_init).provide(:install) do
     @resource[:stop] || ''
   end
 
+  def restart
+    @resource[:restart] || ''
+  end
+
   def name
     @resource[:name] || ''
   end
@@ -40,14 +48,16 @@ Puppet::Type.type(:god_init).provide(:install) do
     <<-GOD
 God.watch do |w|
   w.name = "<%= name %>"
-  w.interval = 15.seconds
+  w.interval = 5.seconds
 
   w.start = lambda { system("<%= start %>") }
-  w.start_grace = 10.seconds
 
   <% if !stop.empty? %>
     w.stop = lambda { system("<%= stop %>") }
-    w.stop_grace = 10.seconds
+  <% end %>
+
+  <% if !restart.empty? %>
+    w.restart = lambda { system("<%= restart %>") }
   <% end %>
 
   <% if pid_file %>

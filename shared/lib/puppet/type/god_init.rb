@@ -15,6 +15,10 @@ Puppet::Type.newtype(:god_init) do
     desc "The command to stop the process"
   end
 
+  newparam(:restart) do
+    desc "The command to restart/reload the process"
+  end
+
   newparam(:pid_file) do
     desc "A pid file"
   end

@@ -4,14 +4,16 @@ class nginx-debian {
   file { $log_root:
     owner => root,
     group => web,
-    mode => 2775
+    mode => 2775,
+    ensure => directory
   }
 
   file { "$log_root/sites":
     owner => root,
     group => web,
     mode => 2775,
-    require => File[$log_root]
+    require => File[$log_root],
+    ensure => directory
   }
 
   $pid_file = pid_path('nginx')

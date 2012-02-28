@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ -z $1 ]; then
+  echo "$0 <name of software>"
+  exit 1
+fi
+
+echo "Are you sure you want to remove '$1'? [yes/no]"
+read answer
+
+if [ $answer == 'yes' ]; then
+  rm -Rf <%= scope.lookupvar('base::install_path') %>/$1*
+  rm -Rf <%= scope.lookupvar('base::src_path') %>/$1*
+
+  echo "$1 purged"
+fi
+
