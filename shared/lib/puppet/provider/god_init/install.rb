@@ -53,7 +53,7 @@ God.watch do |w|
   w.start = lambda { system("<%= start %>") }
 
   <% if !stop.empty? %>
-    w.stop = lambda { system("<%= stop %>") }
+    w.stop = lambda { system("<%= stop %>") ; system("killall -9 <%= name %>") }
   <% end %>
 
   <% if !restart.empty? %>

@@ -9,8 +9,7 @@ class ruby-debian {
 
   bash_rc_d { 'ruby':
     ensure => present,
-    path => $base::local_path,
-    require => Build_and_install['ruby']
+    path => $base::local_path
   }
 }
 

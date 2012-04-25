@@ -47,6 +47,8 @@ start() {
 stop() {
   echo -n "Stopping $DESC: "
   kill `cat $PID_PATH`
+  rm $PID_PATH
+  killall -9 god
   RETVAL=$?
   echo "$NAME."
 }

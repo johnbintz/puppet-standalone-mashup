@@ -24,10 +24,12 @@ class nginx($version, $max_pool_size = 20) {
   $config_file = "${base::config_path}/nginx.conf"
   $config_path = "${base::config_path}/nginx"
 
+  $nginx_start = "${sbin_path}/nginx -c ${config_file}"
+  $nginx_stop =  "${sbin_path}/nginx -s stop -c ${config_file}"
   god_init { $name:
-    start => "${sbin_path}/nginx -c ${config_file}",
-    stop => "${sbin_path}/nginx -s stop -c ${config_file}",
-    restart => "${sbin_path}/nginx -s reload -c ${config_file}",
+    start => $nginx_start,
+    stop => $nginx_stop,
+    restart => "${nginx_stop} ; ${nginx_start}",
     pid_file => $pid_file,
     ensure => present,
     notify => Service['god'],
@@ -61,16 +63,16 @@ class nginx($version, $max_pool_size = 20) {
     require => File[$config_file]
   }
 
-  file { '/var/www': ensure => directory }
+  file { '/var/www':
+    ensure => directory,
+    group => web,
+    mode => 2775,
+    require => Group['web']
+  }
 
   file { $symlink_path:
     ensure => $install_path,
     require => Exec['install-passenger']
-  }
-
-  file { "${base::install_path}/bin/new-site":
-    content => template('nginx/new-site'),
-    mode => 755
   }
 }
 
