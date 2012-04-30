@@ -22,5 +22,9 @@ Puppet::Type.newtype(:god_init) do
   newparam(:pid_file) do
     desc "A pid file"
   end
+
+  newparam(:interval) do
+    desc "The check interval"
+  end
 end
 

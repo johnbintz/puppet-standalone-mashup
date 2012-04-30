@@ -35,8 +35,7 @@ Puppet::Type.type(:gem).provide(:install) do
   end
 
   def gem_command(what)
-    command = %{bash -c 'PATH=#{@resource[:path]} gem #{what} #{@resource[:name]} #{options} #{version}'}
-    command
+    %{bash -c 'PATH=#{@resource[:path]} gem #{what} #{@resource[:name]} #{options} #{version}'}
   end
 end
 

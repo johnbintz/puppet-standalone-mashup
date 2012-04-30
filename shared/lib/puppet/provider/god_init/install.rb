@@ -44,11 +44,15 @@ Puppet::Type.type(:god_init).provide(:install) do
     @resource[:pid_file] || ''
   end
 
+  def interval
+    @resource[:interval] || 5
+  end
+
   def config
     <<-GOD
 God.watch do |w|
   w.name = "<%= name %>"
-  w.interval = 5.seconds
+  w.interval = <%= interval %>.seconds
 
   w.start = lambda { system("<%= start %>") }
 
@@ -68,7 +72,7 @@ God.watch do |w|
 
   w.start_if do |start|
     start.condition(:process_running) do |c|
-      c.interval = 5.seconds
+      c.interval = <%= interval %>.seconds
       c.running = false
     end
   end

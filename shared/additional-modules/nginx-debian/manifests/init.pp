@@ -1,4 +1,6 @@
-class nginx-debian {
+class nginx-debian($version, $max_pool_size = 20) {
+  class { nginx: version => $version, max_pool_size => $max_pool_size }
+
   $log_root = "/var/log/nginx"
 
   file { $log_root:

@@ -46,11 +46,15 @@ start() {
 
 stop() {
   echo -n "Stopping $DESC: "
-  kill `cat $PID_PATH`
-  rm $PID_PATH
-  killall -9 god
-  RETVAL=$?
+  if [ -f $PID_PATH ]; then
+    kill `cat $PID_PATH`
+    rm $PID_PATH
+  fi
+
+  killall -9 <%= god_bin %> || true
   echo "$NAME."
+
+  return 0
 }
 
 case "$1" in
