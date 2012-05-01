@@ -29,6 +29,7 @@ class nginx-debian($version, $max_pool_size = 20) {
 
   bash_rc_d { 'nginx':
     ensure => present,
-    path => $base::local_path
+    path => $base::local_path,
+    require => Class['nginx']
   }
 }

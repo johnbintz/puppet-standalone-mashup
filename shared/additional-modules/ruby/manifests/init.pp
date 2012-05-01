@@ -8,7 +8,7 @@ class ruby($version) {
     configure => "--disable-install-doc"
   }
 
-  gem { 'bundler':
+  gem { [ 'bundler', 'penchant' ]:
     require => Build_and_install[$name],
     path => $with_ruby_path,
     ensure => present
