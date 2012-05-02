@@ -1,6 +1,9 @@
 class god-debian {
   class { god: }
 
+  $init_d_prolog = template('god-debian/init_d_prolog')
+  $init_d_prerun = template('god-debian/init_d_prerun')
+
   $god_init_d = "${base::share_path}/god/god-init.d"
   file { $god_init_d:
     content => template('god/god-init.d'),

@@ -3,6 +3,7 @@ Puppet::Type.type(:download_and_unpack).provide(:action) do
 
   def create
     system %{bash -c 'cd #{@resource[:src_path]} ; (curl #{@resource[:url]} | tar #{tar_command} -)'}
+    raise StandardError.new("Could not download") if $?.exitstatus != 0
   end
 
   def destroy

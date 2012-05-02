@@ -5,15 +5,14 @@ class god {
     require => Make_and_install['ruby']
   }
 
-  $god_bin = "${base::install_path}/ruby/bin/god"
-  $god_dir = "${base::config_path}/god.d"
-  $pid_path = pid_path($name)
+  $bin = "${base::install_path}/ruby/bin/god"
+  $dir = config_path("god.d")
+  $pid = pid_path($name)
+  $log = log_path($name)
+  $share = share_path($name)
 
-  file { $god_dir:
+  file { [ $dir, $share ]:
     ensure => directory
   }
-
-  $share = "${base::share_path}/god"
-  file { $share: ensure => directory }
 }
 

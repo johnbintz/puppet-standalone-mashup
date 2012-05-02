@@ -11,6 +11,7 @@ class base {
   $install_path = "/usr/local"
   $config_path = "/etc"
   $pid_path = "/var/run"
+  $log_path = "/var/log"
   $local_path = $install_path
 }
 
