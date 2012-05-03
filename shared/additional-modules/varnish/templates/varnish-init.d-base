@@ -1,0 +1,82 @@
+#!/bin/sh
+
+<%= init_d_prolog %>
+
+NAME=varnish
+DESC=varnish
+
+BIN=<%= scope.lookupvar('varnish::bin') %>
+PID=<%= scope.lookupvar('varnish::pid') %>
+LOG=<%= scope.lookupvar('varnish::log') %>
+OVERRIDE_CONFIG=<%= scope.lookupvar('varnish::override_config') %>
+
+<%= init_d_prerun %>
+
+RETVAL=0
+
+VARNISH_VCL_CONF=<%= scope.lookupvar('varnish::vcl_path') %>
+VARNISH_BACKEND_STORE="file,<%= scope.lookupvar('varnish::store_file_path') %>,<%= scope.lookupvar('varnish::store_file_size') %>"
+VARNISH_USERNAME=<%= username %>
+VARNISH_PASSWORD=<%= password %>
+
+# Include varnish defaults
+[ -e $OVERRIDE_CONFIG ] && . $OVERRIDE_CONFIG
+
+start() {
+  echo -n "Starting $DESC: "
+  rm -Rf $PID
+
+  ulimit -n ${NFILES:-131072}
+  ulimit -l ${MEMLOCK:-82000}
+
+# Varnish always gives output on STDOUT
+  $BIN -P $pidfile "$DAEMON_OPTS" > /dev/null 2>&1
+
+  echo "$NAME."
+  RETVAL=$?
+  return $RETVAL
+}
+
+stop() {
+  echo -n "Stopping $DESC: "
+  if [ -f $PID ]; then
+    kill `cat $PID`
+    rm $PID
+  fi
+
+  killall -9 $VARNISH || true
+  echo "$NAME."
+
+  return 0
+}
+
+status_q() {
+  test -f $PID
+}
+
+configtest() {
+  $BIN -f "$VARNISH_VCL_CONF" -C -n /tmp > /dev/null && echo "Syntax ok"
+}
+
+# See how we were called.
+case "$1" in
+  start)
+    status_q && exit 0
+    $1
+    ;;
+  stop)
+    status_q || exit 0
+    $1
+    ;;
+  restart)
+    status_q
+    if [ $? -eq 0 ]; then stop; fi
+    start
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 2
+esac
+
+exit $?
+
