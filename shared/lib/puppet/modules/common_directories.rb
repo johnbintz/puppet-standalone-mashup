@@ -24,6 +24,10 @@ module Puppet
       def pid_path(pid_path, name)
         File.join(pid_path, "#{name}.pid")
       end
+
+      def share_path(share_path, name)
+        File.join(share_path, name)
+      end
     end
   end
 end

@@ -13,6 +13,7 @@ class base {
   $pid_path = "/var/run"
   $log_path = "/var/log"
   $local_path = $install_path
+  $share_path = "/usr/local/share"
 }
 
 node default {

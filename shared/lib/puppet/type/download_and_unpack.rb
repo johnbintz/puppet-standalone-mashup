@@ -18,5 +18,9 @@ Puppet::Type.newtype(:download_and_unpack) do
   newparam(:version) do
     desc "The version to install"
   end
+
+  newparam(:original_name) do
+    desc "The directory name that the software unpacks as"
+  end
 end
 

@@ -9,7 +9,7 @@ class ruby($version, $configure = "--disable-install-doc", $build_path = '') {
     path => "${base::path}:${path}:${build_path}"
   }
 
-  gem { [ 'bundler', 'penchant' ]:
+  gem { [ 'bundler', 'penchant', 'thor' ]:
     require => Build_and_install[$name],
     path => $with_ruby_path,
     ensure => present
