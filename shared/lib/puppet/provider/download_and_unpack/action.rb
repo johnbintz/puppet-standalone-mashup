@@ -2,7 +2,7 @@ Puppet::Type.type(:download_and_unpack).provide(:action) do
   desc "Download an unpack a remote repository"
 
   def create
-    system %{bash -c 'cd #{@resource[:src_path]} ; (curl #{@resource[:url]} | tar #{tar_command} -)'}
+    system %{bash -c 'mkdir -p #{@resource[:src_path]} ; cd #{@resource[:src_path]} ; (curl -L #{@resource[:url]} | tar #{tar_command} -)'}
     raise StandardError.new("Could not download") if $?.exitstatus != 0
 
     if original_name

@@ -19,6 +19,10 @@ Puppet::Type.newtype(:configure) do
     desc "Options to build the software"
   end
 
+  newparam(:preconfigure) do
+    desc "Options to go before the configure command, like environment variables"
+  end
+
   newparam(:config_status) do
     desc "Relative location of config.status"
   end

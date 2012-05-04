@@ -1,4 +1,4 @@
-define build_and_install($version, $original_name = '', $source, $path = '', $configure = '', $config_status = 'config.status') {
+define build_and_install($version, $preconfigure = '', $original_name = '', $source, $path = '', $configure = '', $config_status = 'config.status') {
   $full_source = inline_template($source)
 
   $build_path   = build_path($name, $version)
@@ -17,6 +17,7 @@ define build_and_install($version, $original_name = '', $source, $path = '', $co
     build_path => $build_path,
     install_path => $install_path,
     options => $configure,
+    preconfigure => $preconfigure,
     path => $path,
     require => Download_and_unpack[$name],
     config_status => $config_status,
