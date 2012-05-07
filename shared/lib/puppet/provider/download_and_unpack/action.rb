@@ -15,12 +15,14 @@ Puppet::Type.type(:download_and_unpack).provide(:action) do
   end
 
   def exists?
-    unless? || (File.directory?(File.join(@resource[:src_path], target_dir)))
+    return true if unless?
+
+    File.directory?(File.join(@resource[:src_path], target_dir))
   end
 
   private
   def unless?
-    return true if @resource[:unless].empty?
+    return nil if @resource[:unless].empty?
 
     system %{bash -c '#{@resource[:unless]}'}
 

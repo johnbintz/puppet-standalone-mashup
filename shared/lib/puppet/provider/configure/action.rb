@@ -10,7 +10,9 @@ Puppet::Type.type(:configure).provide(:action) do
   end
 
   def exists?
-    unless? || File.file?(config_status)
+    return true if unless?
+
+    File.file?(config_status)
   end
 
   private
@@ -19,7 +21,7 @@ Puppet::Type.type(:configure).provide(:action) do
   end
 
   def unless?
-    return true if @resource[:unless].empty?
+    return nil if @resource[:unless].empty?
 
     system %{bash -c '#{@resource[:unless]}'}
     $?.exitstatus == 0
