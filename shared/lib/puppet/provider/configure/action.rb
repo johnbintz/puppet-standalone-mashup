@@ -10,12 +10,19 @@ Puppet::Type.type(:configure).provide(:action) do
   end
 
   def exists?
-    File.file? config_status
+    unless? || File.file?(config_status)
   end
 
   private
   def config_status
     File.join(@resource[:build_path], @resource[:config_status])
+  end
+
+  def unless?
+    return true if @resource[:unless].empty?
+
+    system %{bash -c '#{@resource[:unless]}'}
+    $?.exitstatus == 0
   end
 
   def path

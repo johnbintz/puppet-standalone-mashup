@@ -22,5 +22,9 @@ Puppet::Type.newtype(:download_and_unpack) do
   newparam(:original_name) do
     desc "The directory name that the software unpacks as"
   end
+
+  newparam(:unless) do
+    desc "If provided, don't run the download unless this condition is true"
+  end
 end
 

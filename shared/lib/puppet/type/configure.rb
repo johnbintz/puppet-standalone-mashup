@@ -30,5 +30,9 @@ Puppet::Type.newtype(:configure) do
   newparam(:path) do
     desc "Path for executables"
   end
+
+  newparam(:unless) do
+    desc "If provided, don't run the configure unless this condition is true"
+  end
 end
 

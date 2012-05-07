@@ -15,10 +15,18 @@ Puppet::Type.type(:download_and_unpack).provide(:action) do
   end
 
   def exists?
-    File.directory?(File.join(@resource[:src_path], target_dir))
+    unless? || (File.directory?(File.join(@resource[:src_path], target_dir)))
   end
 
   private
+  def unless?
+    return true if @resource[:unless].empty?
+
+    system %{bash -c '#{@resource[:unless]}'}
+
+    $?.exitstatus == 0
+  end
+
   def file
     File.join(@resource[:src_path], File.basename(@resource[:url]))
   end
