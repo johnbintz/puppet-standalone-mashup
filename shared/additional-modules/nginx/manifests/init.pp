@@ -32,7 +32,6 @@ class nginx($version, $max_pool_size = 20) {
     restart => "${nginx_stop} ; ${nginx_start}",
     pid_file => $pid_file,
     ensure => present,
-    notify => Service['god'],
     require => Exec['install-passenger']
   }
 

@@ -8,7 +8,20 @@ if [ ! -f ${base_dir}/ruby-base/bin/ruby ]; then
   mkdir -p ${base_dir}/tmp
   cd ${base_dir}/tmp
 
-  RUBY=ftp://ftp.ruby-lang.org/pub/ruby/ruby-1.9.2-p290.tar.bz2
+  opt_dir=${base_dir}/tmp/ruby-opt
+
+  rm -Rf yaml-0.1.4*
+  curl -O http://pyyaml.org/download/libyaml/yaml-0.1.4.tar.gz
+  tar zxvf yaml-0.1.4.tar.gz
+  mv yaml-0.1.4 yaml-0.1.4-base
+  cd yaml-0.1.4-base
+  ./configure --prefix=${opt_dir}
+  make
+  make install
+
+  cd ..
+
+  RUBY=ftp://ftp.ruby-lang.org/pub/ruby/ruby-1.9.3-p194.tar.bz2
   RUBY_FILENAME=${RUBY##*/}
   RUBY_VERSION=${RUBY_FILENAME%%.tar.bz2}
   curl $RUBY > $RUBY_FILENAME
@@ -18,7 +31,7 @@ if [ ! -f ${base_dir}/ruby-base/bin/ruby ]; then
 
   cd "$RUBY_VERSION-base"
 
-  ./configure --prefix=${base_dir}/ruby-base --disable-pthread
+  ./configure --prefix=${base_dir}/ruby-base --with-opt-dir=${opt_dir} --disable-pthread --disable-install-doc
   make
   make install
 
@@ -32,7 +45,7 @@ PATH=${base_dir}/ruby-base/bin:$PATH
 
 if [ ! -f ${base_dir}/ruby-base/bin/puppet ]; then
   echo "Installing Puppet..."
-  gem install puppet
+  gem install puppet --no-ri --no-rdoc
 fi
 
 mkdir -p ~/.puppet

@@ -16,10 +16,19 @@ Puppet::Type.type(:make_and_install).provide(:action) do
   end
 
   def exists?
+    return true if unless?
+
     File.directory?(@resource[:install_path]) && File.symlink?(symlink_path)
   end
 
   private
+  def unless?
+    return nil if @resource[:unless].empty?
+
+    system %{bash -c '#{@resource[:unless]}'}
+    $?.exitstatus == 0
+  end
+
   def symlink_path
     File.join(File.dirname(@resource[:install_path]), @resource[:name])
   end

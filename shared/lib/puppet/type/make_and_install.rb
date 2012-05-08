@@ -22,5 +22,9 @@ Puppet::Type.newtype(:make_and_install) do
   newparam(:path) do
     desc "Binary path to add"
   end
+
+  newparam(:unless) do
+    desc "If provided, don't run the make and install unless this condition is true"
+  end
 end
 

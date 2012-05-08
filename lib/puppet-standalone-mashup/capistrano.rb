@@ -37,24 +37,24 @@ Capistrano::Configuration.instance.load do
     run "cd #{base_dir} && #{sudo} rm -Rf #{apps}"
   end
 
-  desc "Apply the configuration"
-  task :apply do
+  desc "Copy files to the remote server"
+  task :copy_files do
     top.copy
     top.copy_shared
     top.copy_skel
+  end
+
+  desc "Apply the configuration"
+  task :apply do
+    top.copy_files
 
     run "cd #{puppet_dir} && #{sudo} ./apply"
   end
 
   desc "Bootstrap the server"
   task :bootstrap do
-    top.copy
-    top.copy_shared
-    top.copy_skel
-
-    if rename_server
-      top.rename
-    end
+    top.copy_files
+    top.rename if rename_server
 
     run "cd #{puppet_dir} && #{sudo} ./bootstrap"
   end
