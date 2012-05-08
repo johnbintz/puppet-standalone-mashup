@@ -27,4 +27,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'cucumber'
   s.add_runtime_dependency 'guard'
   s.add_runtime_dependency 'guard-cucumber'
+  s.add_runtime_dependency 'linode'
 end

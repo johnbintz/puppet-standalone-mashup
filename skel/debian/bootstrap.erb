@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ ! $UID -eq 0 ]; then
+if [ $UID -ne 0 ]; then
   sudo $0
   exit
 fi
