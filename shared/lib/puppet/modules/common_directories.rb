@@ -28,6 +28,10 @@ module Puppet
       def share_path(share_path, name)
         File.join(share_path, name)
       end
+
+      def data_path(data_path, name)
+        File.join(data_path, name)
+      end
     end
   end
 end
