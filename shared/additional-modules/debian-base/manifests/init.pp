@@ -14,6 +14,7 @@ class base {
   $log_path = "/var/log"
   $local_path = $install_path
   $share_path = "/usr/local/share"
+  $data_path = "/var/data"
 }
 
 node default {
@@ -21,7 +22,5 @@ node default {
   include debian
 
   class { base: require => Class['basics'] }
-
-  include umask
 }
 

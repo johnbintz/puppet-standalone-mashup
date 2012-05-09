@@ -47,8 +47,13 @@ Capistrano::Configuration.instance.load do
   desc "Apply the configuration"
   task :apply do
     top.copy_files
+    top.rename if rename_server && wrong_server_name?
 
     run "cd #{puppet_dir} && #{sudo} ./apply"
+  end
+
+  def wrong_server_name?
+    capture("hostname").strip
   end
 
   desc "Bootstrap the server"

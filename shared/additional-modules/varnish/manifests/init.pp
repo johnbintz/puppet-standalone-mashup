@@ -33,11 +33,6 @@ class varnish($version, $store_file_mb = 1024) {
     require => Build_and_install[$name]
   }
 
-  file { $varnish::vcl_path:
-    content => template('varnish-redhat/default.vcl'),
-    require => [ Mkdir_p[$config] ]
-  }
-
   file { $override_config:
     ensure => present,
     mode => 644,

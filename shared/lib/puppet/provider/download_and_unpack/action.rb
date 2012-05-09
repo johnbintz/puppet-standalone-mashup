@@ -22,7 +22,7 @@ Puppet::Type.type(:download_and_unpack).provide(:action) do
 
   private
   def unless?
-    return nil if @resource[:unless].empty?
+    return nil if !@resource[:unless] || @resource[:unless].empty?
 
     system %{bash -c '#{@resource[:unless]}'}
 

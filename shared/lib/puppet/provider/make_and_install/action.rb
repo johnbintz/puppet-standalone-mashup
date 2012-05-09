@@ -5,6 +5,7 @@ Puppet::Type.type(:make_and_install).provide(:action) do
 
   def create
     system %{bash -c '#{path} cd #{@resource[:build_path]} ; make && make install'}
+    raise StandardError.new("Could not make and install") if $?.exitstatus != 0
 
     FileUtils.rm_rf symlink_path
     FileUtils.ln_sf(@resource[:install_path], symlink_path)
@@ -23,9 +24,10 @@ Puppet::Type.type(:make_and_install).provide(:action) do
 
   private
   def unless?
-    return nil if @resource[:unless].empty?
+    return nil if !@resource[:unless] || @resource[:unless].empty?
 
     system %{bash -c '#{@resource[:unless]}'}
+
     $?.exitstatus == 0
   end
 

@@ -3,6 +3,7 @@ Puppet::Type.type(:configure).provide(:action) do
 
   def create
     system %{bash -c '#{path} cd #{@resource[:build_path]} ; #{@resource[:preconfigure]} ./configure --prefix=#{@resource[:install_path]} #{@resource[:options]}'}.tap { |o| p o }
+    raise StandardError.new("Could not configure") if $?.exitstatus != 0
   end
 
   def destroy
@@ -21,9 +22,10 @@ Puppet::Type.type(:configure).provide(:action) do
   end
 
   def unless?
-    return nil if @resource[:unless].empty?
+    return nil if !@resource[:unless] || @resource[:unless].empty?
 
     system %{bash -c '#{@resource[:unless]}'}
+
     $?.exitstatus == 0
   end
 
