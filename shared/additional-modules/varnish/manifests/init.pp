@@ -1,12 +1,19 @@
 class varnish($version, $store_file_mb = 1024) {
   $install_path = install_path($name, $version)
-  $pid = pid_path($name)
-  $log = log_path($name)
   $config = config_path($name)
   $share = share_path($name)
   $data = data_path($name)
+  $sbin = sbin_path($name)
+  $bin_path = bin_path($name)
 
-  $bin = "${name}d"
+  $bin = "${sbin}/${name}d"
+  $pid = pid_path($name)
+  $log = log_path($name)
+
+  $ncsa_bin = "${bin_path}/varnishncsa"
+  $ncsa_pid = pid_path('varnishncsa')
+  $ncsa_log = $log
+
   $sysconfig_dir = "${config}/sysconfig"
   $vcl_path = "${config}/default.vcl"
 
@@ -28,7 +35,7 @@ class varnish($version, $store_file_mb = 1024) {
     source => "http://repo.varnish-cache.org/source/varnish-<%= scope.lookupvar('version') %>.tar.gz"
   }
 
-  mkdir_p { [ $config, $share, $sysconfig_dir, $data ]:
+  mkdir_p { [ $config, $log, $share, $sysconfig_dir, $data ]:
     path => $base::path,
     require => Build_and_install[$name]
   }
@@ -47,5 +54,17 @@ class varnish($version, $store_file_mb = 1024) {
     path => $base::path,
     require => Mkdir_p[$data],
     logoutput => true
+  }
+
+  $varnish_start = "service varnish start"
+  $varnish_stop = "service varnish stop"
+
+  god_init { $name:
+    start => $varnish_start,
+    stop => $varnish_stop,
+    restart => "${varnish_stop} && ${varnish_start}",
+    pid_file => $pid,
+    ensure => present,
+    require => Build_and_install[$name]
   }
 }

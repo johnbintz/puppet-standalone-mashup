@@ -1,6 +1,6 @@
 set -e
 
 # Make sure the binary and the config file are present before proceeding
-test -x <%= god_bin %> || exit 0
+test -x <%= scope.lookupvar('god::bin') %> || exit 0
 
 . /lib/lsb/init-functions
