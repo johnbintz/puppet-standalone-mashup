@@ -1,0 +1,7 @@
+#!/bin/sh
+PATH=<%= scope.lookupvar('base::path') %>
+
+NAME=<%= name %>
+DESC=<%= name %>
+
+RETVAL=0

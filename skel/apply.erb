@@ -1,5 +1,5 @@
 #!/bin/bash
 
 mkdir -p ~/.puppet
-<%= use_sudo ? "sudo env" : "" %> RUBYLIB="${PWD}/shared/lib" <%= with_additional_puppet_bin_path %> puppet apply --confdir=$PWD --modulepath=$PWD/modules:$PWD/shared/modules:$PWD/shared/additional-modules --templatedir=$PWD/templates -v $@ manifests/site.pp
+<%= use_sudo ? "sudo env" : "" %> RUBYLIB="${PWD}/shared/lib" <%= with_additional_puppet_bin_path %> puppet apply --confdir=$PWD --modulepath=$PWD/modules:$PWD/shared/modules:$PWD/shared/additional-modules --templatedir=$PWD/shared/templates:$PWD/templates -v $@ manifests/site.pp
 

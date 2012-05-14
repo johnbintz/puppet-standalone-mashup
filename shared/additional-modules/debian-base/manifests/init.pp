@@ -15,7 +15,25 @@ class base {
   $log_path = "/var/log"
   $local_path = $install_path
   $share_path = "/usr/local/share"
-  $data_path = "/var/data"
+}
+
+define init_d($init_d_prolog = '', $init_d_prerun = '') {
+  file { "/etc/init.d/${name}":
+    content => template("${name}/${name}-init.d"),
+    mode => 755
+  }
+
+  $update_rc_d = "update-rc.d ${name}"
+  exec { $update_rc_d:
+    command => "update-rc.d ${name} defaults",
+    require => File["/etc/init.d/${name}"],
+    path => $base::path
+  }
+
+  service { $name:
+    require => Exec[$update_rc_d],
+    ensure => running
+  }
 }
 
 node default {

@@ -104,7 +104,7 @@ Capistrano::Configuration.instance.load do
 
     run "mkdir -p #{puppet_dir}/shared/additional-modules"
 
-    (%w{lib modules} + additional_modules.collect { |dir| "additional-modules/#{dir}" }).each do |dir|
+    (%w{lib modules templates} + additional_modules.collect { |dir| "additional-modules/#{dir}" }).each do |dir|
       top.upload PuppetStandaloneMashup::BASE.join('shared', dir).to_s, File.join(puppet_dir, 'shared', dir)
     end
   end

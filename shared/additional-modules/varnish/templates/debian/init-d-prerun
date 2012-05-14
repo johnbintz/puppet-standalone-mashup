@@ -1,0 +1,8 @@
+# Open files (usually 1024, which is way too small for varnish)
+ulimit -n ${NFILES:-131072}
+
+# Maxiumum locked memory size for shared memory log
+ulimit -l ${MEMLOCK:-82000}
+
+USER=<%= user %>
+GROUP=<%= group %>
