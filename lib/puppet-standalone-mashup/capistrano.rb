@@ -10,6 +10,20 @@ module PuppetStandaloneMashup
   BASE = Pathname(File.expand_path('../../..', __FILE__))
 end
 
+require 'capistrano/command'
+
+module Capistrano
+  class Command
+    alias :_replace_placeholders :replace_placeholders
+
+    def replace_placeholders(command, channel)
+      command = _replace_placeholders(command, channel)
+      command.gsub!('$CAPISTRANO:TARGETHOSTNAME$', channel[:server].options[:target_hostname])
+      command
+    end
+  end
+end
+
 Capistrano::Configuration.instance.load do
   _cset(:puppet_dir) { '/tmp/puppet' }
   _cset(:additional_puppet_bin_path) { nil }
