@@ -1,0 +1,2 @@
+VARNISH_USERNAME=<%= varnish_user %>
+VARNISH_GROUP=<%= varnish_group %>
