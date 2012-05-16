@@ -18,7 +18,7 @@ module Capistrano
 
     def replace_placeholders(command, channel)
       command = _replace_placeholders(command, channel)
-      command.gsub!('$CAPISTRANO:TARGETHOSTNAME$', channel[:server].options[:target_hostname])
+      command.gsub!('$CAPISTRANO:TARGETHOSTNAME$', channel[:server].options[:target_hostname] || '')
       command
     end
   end

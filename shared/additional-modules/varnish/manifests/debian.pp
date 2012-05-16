@@ -14,7 +14,7 @@ class varnish::debian($version, $vcl_template, $store_file_mb = 1024) {
     vcl_template => $vcl_template
   }
 
-  init_d_bundle { 'varnish':
+  init_d { 'varnish':
     init_d_prolog => template('varnish/debian/init-d-prolog'),
     init_d_prerun => template('varnish/debian/init-d-prerun'),
     require => Class['varnish']
