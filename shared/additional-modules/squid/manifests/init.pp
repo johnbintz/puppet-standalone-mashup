@@ -1,6 +1,8 @@
-class squid($version, $user, $config_template) {
-  $build_command = template('squid/build-squid.sh')
+class squid($version, $user, $config_template, $error_template) {
+  $bin = bin_path($name)
+  $sbin = sbin_path($name)
 
+  $build_dir = build_path($name, $version)
   $log_dir = log_path($name)
   $pid = pid_path($name)
   $data_dir = data_path($name)
@@ -18,29 +20,29 @@ class squid($version, $user, $config_template) {
     preconfigure => template('squid/preconfigure')
   }
 
-  $squid_imgsrc_ip = extlookup('squid_imgsrc_ip')
-  $squid_cache_dir_size = extlookup('squid_cache_dir_size')
-
-  $config = '/etc/squid3/squid.conf'
-
   file { $config:
     content => template($config_template),
-    require => Exec['build-squid']
+    require => Build_and_install[$name]
   }
 
-  exec { 'squid -z':
-    require => [ File['/var/log/squid3'], File['/var/spool/squid3'] ],
-    path => '/usr/bin:/usr/sbin:/bin:/sbin',
-    unless => 'test -d /var/spool/squid3/10'
-  }
+  $squid_start = 'service squid start'
+  $squid_stop = 'service squid stop'
 
-  god_conf { $name: }
+  god_init { $name:
+    start => $squid_start,
+    stop => $squid_stop,
+    restart => "${squid_stop} && ${squid_start}",
+    pid_file => $pid,
+    ensure => present,
+    require => File[$config],
+    interval => 10
+  }
 
   file { [
-           '/usr/share/squid3/errors/en/ERR_CANNOT_FORWARD',
-           '/usr/share/squid3/errors/templates/ERR_CANNOT_FORWARD'
+           "${data_dir}/errors/en/ERR_CANNOT_FORWARD",
+           "${data_dir}/errors/templates/ERR_CANNOT_FORWARD"
          ]:
-    content => template('squid/error_page.html'),
+    content => template($error_template),
     require => Build_and_install['squid']
   }
 }

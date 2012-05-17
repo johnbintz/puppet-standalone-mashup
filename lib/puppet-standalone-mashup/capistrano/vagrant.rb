@@ -19,7 +19,20 @@ Capistrano::Configuration.instance.load do
     end
   end
 
-  before 'apply', 'ensure_puppet'
-  before 'bootstrap', 'ensure_puppet'
+  desc "Fix DNS resolution if bitten by the VirtualBox DNS bug"
+  task :fix_dns do
+    result = capture("ping -w 1 -W 1 -c 1 -q google.com; echo $?").lines.to_a.last.strip
+    if result.to_i != 0
+      run "#{sudo} sed -i 's#10.0.2.3#10.0.2.2#g' /etc/resolv.conf"
+      result = capture("ping -w 1 -W 1 -c 1 -q google.com; echo $?").lines.to_a.last.strip
+
+      if result.to_i != 0
+        raise StandardError.new("Unable to fix DNS to get around VirtualBox DNS bug.")
+      end
+    end
+  end
+
+  before 'apply', 'ensure_puppet', 'fix_dns'
+  before 'bootstrap', 'ensure_puppet', 'fix_dns'
 end
 

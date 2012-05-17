@@ -1,4 +1,4 @@
-class squid::debian($version, $config_template) {
+class squid::debian($version, $config_template, $error_template) {
   $squid_user = 'squid'
   $squid_group = 'squid'
 
@@ -8,6 +8,7 @@ class squid::debian($version, $config_template) {
     version => $version,
     user => 'squid',
     config_template => $config_template,
+    error_template => $error_template,
     require => User['squid']
   }
 
@@ -18,7 +19,7 @@ class squid::debian($version, $config_template) {
   }
 
   exec { 'ensure-data-dir-ownership':
-    command => "chown -R ${squid_user}:${squid_group} ${squid::data}",
+    command => "chown -R ${squid_user}:${squid_group} ${squid::data_dir} ${squid::log_dir}",
     path => $base::path,
     require => Class['squid']
   }
