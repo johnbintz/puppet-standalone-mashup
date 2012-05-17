@@ -1,8 +1,15 @@
 define init_d_bundle($init_d_prolog, $init_d_prerun) {
-  $init_d_source = "${base::share_path}/${name}/${name}-init.d"
+  $share_path = "${base::share_path}/${name}"
+
+  file { $share_path:
+    ensure => directory
+  }
+
+  $init_d_source = "${share_path}/${name}-init.d"
   file { $init_d_source:
     content => template("${name}/${name}-init.d"),
-    mode => 755
+    mode => 755,
+    require => File[$share_path]
   }
 
   $init_d = "/etc/init.d/${name}"
