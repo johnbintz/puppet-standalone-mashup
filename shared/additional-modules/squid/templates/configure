@@ -1,0 +1,33 @@
+--disable-maintainer-mode \
+--disable-dependency-tracking \
+--srcdir=. \
+--datadir=<%= data_dir %> \
+--sysconfdir=<%= config_dir %> \
+--enable-inline \
+--enable-async-io=24 \
+--enable-storeio=aufs \
+--enable-removal-policies="heap,lru" \
+--enable-delay-pools \
+--enable-cache-digests \
+--enable-kill-parent-hack \
+--with-dl \
+--with-aio \
+--enable-zph-qos \
+--disable-ipv6 \
+--disable-unlinkd \
+--disable-wccp \
+--disable-wccpv2 \
+--disable-ident-lookups \
+--disable-auth \
+--enable-follow-x-forwarded-for \
+--enable-arp-acl \
+--enable-esi \
+--disable-translation \
+--with-logdir=<%= log_dir %> \
+--with-pidfile=<%= pid %> \
+--with-filedescriptors=65536 \
+--with-large-files \
+--enable-linux-netfilter \
+--with-default-user=<%= user %> \
+--with-squid=<%= build_dir %> \
+--enable-ltdl-convenience
