@@ -34,6 +34,9 @@ stop() {
     fi
   done
 
+  killall -9 varnishd
+  killall -9 varnishncsa
+
   echo "done"
 }
 
