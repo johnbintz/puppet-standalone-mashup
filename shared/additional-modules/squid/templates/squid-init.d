@@ -46,29 +46,15 @@ start() {
   umask 027
   ulimit -n 65535
   $BIN $ARGS
+  chown <%= scope.lookupvar('squid::user') %> $PID
   RETVAL=$?
 
   return $RETVAL
 }
 
 stop() {
-  PIDID=`cat $PID 2>/dev/null`
-
-  if [ -f $PID ]; then
-    kill $PIDID
-  fi
-
-  cnt=0
-  while kill -0 $PIDID 2>/dev/null
-  do
-          cnt=`expr $cnt + 1`
-          if [ $cnt -gt 24 ]
-          then
-              RETVAL=1
-              return RETVAL
-          fi
-          sleep 5
-  done
+  $BIN $ARGS -k shutdown
+  $BIN $ARGS -k kill
 
   return $RETVAL
 }

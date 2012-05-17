@@ -1,0 +1,8 @@
+### BEGIN INIT INFO
+# Provides:          tc
+# Required-Start:    $local_fs $remote_fs $network
+# Required-Stop:     $local_fs $remote_fs $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Traffic shaping
+### END INIT INFO
