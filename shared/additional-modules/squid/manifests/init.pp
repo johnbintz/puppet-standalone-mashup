@@ -9,8 +9,8 @@ class squid($version, $user, $config_template, $error_template) {
   $config_dir = config_path($name)
   $config = "${config_dir}/squid.conf"
 
-  file { [ $log_dir, $data_dir, $config_dir ]:
-    ensure => directory
+  mkdir_p { [ $log_dir, $data_dir, $config_dir ]:
+    path => $base::path
   }
 
   build_and_install { $name:
