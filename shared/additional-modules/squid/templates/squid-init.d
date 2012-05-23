@@ -59,4 +59,10 @@ stop() {
   return $RETVAL
 }
 
+rotate() {
+  $BIN $ARGS -k rotate
+
+  return $RETVAL
+}
+
 <%= scope.function_template('base/init-d-actions') %>

@@ -26,7 +26,7 @@ class squid::debian($version, $config_template, $error_template) {
 
   logrotate_d { 'squid':
     postrotate => 'service squid rotate',
-    pattern => "${squid::log}/access.log"
+    pattern => "${squid::log_dir}/access.log"
   }
 }
 

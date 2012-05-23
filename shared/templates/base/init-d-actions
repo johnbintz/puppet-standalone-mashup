@@ -9,6 +9,9 @@ case "$1" in
         stop
         start
         ;;
+    rotate)
+        rotate
+        ;;
     *)
         echo "Usage: $0 {start|stop|restart}"
         $RETVAL=1
