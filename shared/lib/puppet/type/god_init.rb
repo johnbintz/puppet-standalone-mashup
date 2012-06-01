@@ -19,6 +19,10 @@ Puppet::Type.newtype(:god_init) do
     desc "The command to restart/reload the process"
   end
 
+  newparam(:dir) do
+    desc "The directory where god configs are held"
+  end
+
   newparam(:pid_file) do
     desc "A pid file"
   end

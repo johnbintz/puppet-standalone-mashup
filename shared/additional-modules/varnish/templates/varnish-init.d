@@ -1,4 +1,4 @@
-<%= scope.function_template('base/init-d-header') %>
+<%= scope.function_template([ 'base/init-d-header' ]) %>
 
 <%= init_d_prolog %>
 <%= init_d_prerun %>
@@ -14,6 +14,7 @@ start() {
     -f <%= scope.lookupvar('varnish::vcl_path') %> \
     -s file,<%= scope.lookupvar('varnish::store_file_path') %>
   RETVAL=$?
+  echo $RETVAL
   if [ $RETVAL -eq 0 ]; then
     <%= scope.lookupvar('varnish::ncsa_bin') %> \
       -P <%= scope.lookupvar('varnish::ncsa_pid') %> \
@@ -40,5 +41,5 @@ stop() {
   echo "done"
 }
 
-<%= scope.function_template('base/init-d-actions') %>
+<%= scope.function_template([ 'base/init-d-actions' ]) %>
 

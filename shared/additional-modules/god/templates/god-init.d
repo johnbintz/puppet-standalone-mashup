@@ -1,4 +1,4 @@
-<%= scope.function_template('base/init-d-header') %>
+<%= scope.function_template(['base/init-d-header']) %>
 <% bin = scope.lookupvar('god::bin') %>
 
 <%= init_d_prolog %>
@@ -36,5 +36,5 @@ stop() {
   echo "$NAME."
 }
 
-<%= scope.function_template('base/init-d-actions') %>
+<%= scope.function_template(['base/init-d-actions']) %>
 

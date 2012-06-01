@@ -49,6 +49,7 @@ class varnish($version, $vcl_template, $store_file_mb = 1024) {
   god_init { $name:
     start => $varnish_start,
     stop => $varnish_stop,
+    dir => config_path('god.d'),
     restart => "${varnish_stop} && ${varnish_start}",
     pid_file => $pid,
     ensure => present,

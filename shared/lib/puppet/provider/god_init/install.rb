@@ -4,6 +4,8 @@ Puppet::Type.type(:god_init).provide(:install) do
   desc "Install a God script"
 
   def create
+    FileUtils.mkdir_p File.dirname(file)
+
     File.open(file, 'wb') { |fh| fh.print processed_config }
   end
 
@@ -21,7 +23,7 @@ Puppet::Type.type(:god_init).provide(:install) do
 
   private
   def file
-    "/etc/god.d/#{@resource[:name]}.god"
+    File.join(@resource[:dir], "#{@resource[:name]}.god")
   end
 
   def start
