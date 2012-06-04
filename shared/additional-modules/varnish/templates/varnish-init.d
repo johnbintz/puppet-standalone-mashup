@@ -3,6 +3,9 @@
 <%= init_d_prolog %>
 <%= init_d_prerun %>
 
+USER=<%= user %>
+GROUP=<%= group %>
+
 start() {
   echo -n "Starting $NAME: "
 

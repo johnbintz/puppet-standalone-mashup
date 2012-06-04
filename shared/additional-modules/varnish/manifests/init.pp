@@ -42,7 +42,7 @@ class varnish($version, $vcl_template, $store_file_mb = 1024) {
   $varnish_stop = "service varnish stop"
 
   file { $vcl_path:
-    content => template($vcl_template),
+    content => $vcl_template,
     require => Build_and_install[$name]
   }
 

@@ -1,6 +1,6 @@
-class varnish::debian($version, $vcl_template, $store_file_mb = 1024) {
-  $varnish_user = 'varnish'
-  $varnish_group = 'varnish'
+class varnish::debian($version, $vcl, $store_file_mb = 1024) {
+  $user = 'varnish'
+  $group = 'varnish'
 
   user { $varnish_user: uid => 27835 }
 
@@ -11,7 +11,7 @@ class varnish::debian($version, $vcl_template, $store_file_mb = 1024) {
   class { 'varnish':
     version => $version,
     require => Package[$packages],
-    vcl_template => $vcl_template
+    vcl_template => $vcl
   }
 
   init_d { 'varnish':
@@ -21,7 +21,7 @@ class varnish::debian($version, $vcl_template, $store_file_mb = 1024) {
   }
 
   exec { 'ensure-data-store-ownership':
-    command => "chown -R ${varnish_user}:${varnish_group} ${varnish::data}",
+    command => "chown -R ${user}:${group} ${varnish::data}",
     path => $base::path,
     require => Class['varnish']
   }

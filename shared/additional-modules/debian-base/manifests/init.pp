@@ -1,5 +1,10 @@
 class basics {
-  $packages = [ "ntp", "ntpdate", "gcc", "curl", "build-essential", "patch", 'sysstat', 'git-core', 'vim' ]
+  $packages = [
+    "ntp", "ntpdate", "gcc", "curl",
+    "build-essential", "patch", 'sysstat',
+    'git-core', 'vim'
+  ]
+
   package { $packages: ensure => installed }
 
   bash_rc { "/etc/bash.bashrc": ensure => present }

@@ -1,0 +1,19 @@
+#
+# varnish Control the Varnish Cache
+#
+# chkconfig: - 90 10
+# description: Varnish is a high-perfomance HTTP accelerator
+# processname: varnishd
+# config: /etc/sysconfig/varnish
+# pidfile: /var/run/varnishd.pid
+
+### BEGIN INIT INFO
+# Provides: varnish
+# Required-Start: $network $local_fs $remote_fs
+# Required-Stop: $network $local_fs $remote_fs
+# Default-Start:
+# Default-Stop:
+# Should-Start: $syslog
+# Short-Description: start and stop varnishd
+# Description: Varnish is a high-perfomance HTTP accelerator
+### END INIT INFO
