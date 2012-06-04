@@ -57,6 +57,7 @@ God.watch do |w|
   w.interval = <%= interval %>.seconds
 
   w.start = lambda { system("<%= start %>") }
+  w.start_grace = <% interval %>.seconds
 
   <% if !stop.empty? %>
     w.stop = lambda { system("<%= stop %>") ; system("killall -9 <%= name %>") }

@@ -14,5 +14,9 @@ class god {
   file { [ $dir, $share ]:
     ensure => directory
   }
+
+  init_d { 'god':
+    require => Gem['god']
+  }
 }
 

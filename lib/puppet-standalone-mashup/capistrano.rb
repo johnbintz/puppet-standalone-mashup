@@ -34,6 +34,7 @@ Capistrano::Configuration.instance.load do
   _cset(:rename_server) { true }
   _cset(:use_sudo) { true }
   _cset(:additional_modules) { [] }
+  _cset(:additional_puppet_options) { '' }
 
   @dir_made = false
 

@@ -3,8 +3,8 @@
 <%= init_d_prolog %>
 <%= init_d_prerun %>
 
-USER=<%= user %>
-GROUP=<%= group %>
+USER=<%= scope.lookupvar('varnish::user') %>
+GROUP=<%= scope.lookupvar('varnish::group') %>
 
 start() {
   echo -n "Starting $NAME: "

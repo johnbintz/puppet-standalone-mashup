@@ -1,4 +1,4 @@
-class varnish($version, $vcl_template, $store_file_mb = 1024) {
+class varnish($version, $vcl, $user = 'varnish', $group = 'varnish', $store_file_mb = 1024) {
   $install_path = install_path($name, $version)
   $config = config_path($name)
   $share = share_path($name)
@@ -19,17 +19,24 @@ class varnish($version, $vcl_template, $store_file_mb = 1024) {
   $store_file_path = "${data}/store"
   $store_file_size = $store_file_mb * 1024 * 1024
 
+  $varnish_start = "service varnish start"
+  $varnish_stop = "service varnish stop"
+  $varnish_rotate = "service varnish rotate"
+
+  $source = "http://repo.varnish-cache.org/source/varnish-${version}.tar.gz"
+  $dirs = [ $config, $log, $share, $data ]
+
   build_and_install { $name:
     version => $version,
-    source => "http://repo.varnish-cache.org/source/varnish-<%= scope.lookupvar('version') %>.tar.gz"
+    source => $source
   }
 
-  mkdir_p { [ $config, $log, $share, $data ]:
+  mkdir_p { $dirs:
     path => $base::path,
     require => Build_and_install[$name]
   }
 
-  exec { 'create-store-file':
+  exec { "${name} create-store-file":
     command => "dd if=/dev/zero of=${store_file_path} bs=${store_file_size} count=1",
     timeout => 0,
     unless => "test -f ${store_file_path}",
@@ -38,11 +45,8 @@ class varnish($version, $vcl_template, $store_file_mb = 1024) {
     logoutput => true
   }
 
-  $varnish_start = "service varnish start"
-  $varnish_stop = "service varnish stop"
-
   file { $vcl_path:
-    content => $vcl_template,
+    content => $vcl,
     require => Build_and_install[$name]
   }
 
@@ -56,4 +60,32 @@ class varnish($version, $vcl_template, $store_file_mb = 1024) {
     require => File[$vcl_path],
     interval => 10
   }
+
+  /* debian stuff */
+  if ($osfamily == 'debian') {
+    user { $user: uid => 27835 }
+
+    $packages = [ 'libpcre3', 'libpcre3-dev', 'pkg-config' ]
+
+    package { $packages:
+      ensure => installed,
+      before => Build_and_install[$name]
+    }
+
+    exec { 'ensure-data-store-ownership':
+      command => "chown -R ${user}:${group} ${data}",
+      path => $base::path,
+      require => Exec["${name} create-store-file"]
+    }
+
+    logrotate_d { 'varnishncsa':
+      postrotate => 'service varnish rotate',
+      pattern => "${log}/access.log"
+    }
+  }
+
+  init_d { $name:
+    require => Build_and_install[$name]
+  }
 }
+
