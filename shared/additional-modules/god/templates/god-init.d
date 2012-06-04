@@ -32,7 +32,7 @@ stop() {
     fi
   done
 
-  killall -9 <%= bin %> || true
+  pkill -9 -f <%= bin %> || true
   echo "$NAME."
 }
 

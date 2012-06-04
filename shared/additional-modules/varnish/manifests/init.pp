@@ -85,7 +85,7 @@ class varnish($version, $vcl, $user = 'varnish', $group = 'varnish', $store_file
   }
 
   init_d { $name:
-    require => Build_and_install[$name]
+    require => Mkdir_p[$dirs]
   }
 }
 
