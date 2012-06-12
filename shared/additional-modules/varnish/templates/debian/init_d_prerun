@@ -4,5 +4,3 @@ ulimit -n ${NFILES:-131072}
 # Maxiumum locked memory size for shared memory log
 ulimit -l ${MEMLOCK:-82000}
 
-USER=<%= varnish_user %>
-GROUP=<%= varnish_group %>

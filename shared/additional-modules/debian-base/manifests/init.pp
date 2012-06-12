@@ -23,8 +23,8 @@ class base {
 }
 
 define init_d {
-  $init_d_prerun = template("${name}/${osfamily}/init_d_prerun")
-  $init_d_prolog = template("${name}/${osfamily}/init_d_prolog")
+  $init_d_prerun = template("${name}/${::osfamily}/init_d_prerun")
+  $init_d_prolog = template("${name}/${::osfamily}/init_d_prolog")
 
   file { "/etc/init.d/${name}":
     content => template("${name}/${name}-init.d"),
