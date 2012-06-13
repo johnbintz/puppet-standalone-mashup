@@ -62,7 +62,7 @@ class varnish($version, $vcl, $user = 'varnish', $group = 'varnish', $store_file
   }
 
   /* debian stuff */
-  if ($osfamily == 'debian') {
+  if ($::osfamily == 'debian') {
     user { $user: uid => 27835 }
 
     $packages = [ 'libpcre3', 'libpcre3-dev', 'pkg-config' ]
