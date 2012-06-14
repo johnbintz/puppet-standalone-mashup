@@ -6,7 +6,8 @@ class ruby($version, $configure = "--disable-install-doc", $build_path = '') {
     version => $version,
     source => "http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-<%= version %>.tar.gz",
     configure => $configure,
-    path => "${base::path}:${path}:${build_path}"
+    preconfigure => "LDFLAGS='-rdynamic -Wl,-export-dynamic'",
+    path => "${build_path}:${with_ruby_path}"
   }
 
   if ($osfamily == 'debian') {
