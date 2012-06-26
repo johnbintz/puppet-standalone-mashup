@@ -77,6 +77,11 @@ Capistrano::Configuration.instance.load do
     top.rename if rename_server
 
     run "cd #{puppet_dir} && #{sudo} ./bootstrap"
+    top.reboot
+  end
+
+  desc "Reboot the server after bootstrapping"
+  task :reboot do
     run "#{sudo} shutdown -r now"
   end
 
