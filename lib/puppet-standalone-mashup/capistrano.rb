@@ -77,6 +77,7 @@ Capistrano::Configuration.instance.load do
     top.rename if rename_server
 
     run "cd #{puppet_dir} && #{sudo} ./bootstrap"
+    run "#{sudo} shutdown -r now"
   end
 
   desc "Rename the server"
@@ -92,7 +93,7 @@ Capistrano::Configuration.instance.load do
     top.ensure_puppet_dir
 
     Dir["*"].each do |file|
-      if !%w{vbox}.include?(file)
+      if !%w{vbox deb}.include?(file)
         top.upload file, File.join(puppet_dir, file)
       end
     end
