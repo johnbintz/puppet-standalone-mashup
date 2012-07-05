@@ -1,54 +1,101 @@
-class varnish($version, $vcl, $user = 'varnish', $group = 'varnish', $store_file_mb = 1024) {
-  $install_path = install_path($name, $version)
-  $config = config_path($name)
-  $share = share_path($name)
-  $data = data_path($name)
-  $sbin = sbin_path($name)
-  $bin_path = bin_path($name)
+class varnish($version = '', $vcl, $user = 'varnish', $group = 'varnish') {
+  if ($::osfamily == 'debian') {
+    $config = '/etc/varnish'
 
-  $bin = "${sbin}/${name}d"
-  $pid = pid_path($name)
-  $log = log_path($name)
+    $default_varnish = '/etc/default/varnish'
+  } else {
+    $install_path = install_path($name, $version)
+    $config = config_path($name)
+    $share = share_path($name)
+    $data = data_path($name)
+    $sbin = sbin_path($name)
+    $bin_path = bin_path($name)
 
-  $ncsa_bin = "${bin_path}/varnishncsa"
-  $ncsa_pid = pid_path('varnishncsa')
-  $ncsa_log = "${log}/access.log"
+    $bin = "${sbin}/${name}d"
+    $pid = pid_path($name)
+    $log = log_path($name)
+
+    $default_varnish = "${config}/defaults"
+  }
 
   $vcl_path = "${config}/default.vcl"
 
-  $store_file_path = "${data}/store"
-  $store_file_size = $store_file_mb * 1024 * 1024
+  if ($::osfamily == 'debian') {
+    debsource { varnish:
+      apt_source => $debian::varnish_apt_source,
+      keyfile => $debian::varnish_keyfile,
+      hash => $debian::varnish_hash
+    }
 
-  $varnish_start = "service varnish start"
-  $varnish_stop = "service varnish stop"
-  $varnish_rotate = "service varnish rotate"
+    $cache_root = "/var/lib"
+    $cache_dir = "${cache_root}/varnish"
 
-  $source = "http://repo.varnish-cache.org/source/varnish-${version}.tar.gz"
-  $dirs = [ $config, $log, $share, $data ]
+    package { varnish:
+      ensure => latest,
+      require => [
+        Debsource['varnish'], Mkdir_p[$cache_dir]
+      ]
+    }
 
-  build_and_install { $name:
-    version => $version,
-    source => $source
+    $store_file_size = dir_size($cache_root)
+
+    Package['varnish'] -> File[$default_varnish, $vcl_path]
+  } else {
+    $source = "http://repo.varnish-cache.org/source/varnish-${version}.tar.gz"
+    $dirs = [ $config, $log, $share, $data ]
+
+    $cache_dir = "${data}/store"
+
+    build_and_install { $name:
+      version => $version,
+      source => $source
+    }
+
+    mkdir_p { $dirs:
+      path => $base::path,
+      require => Build_and_install[$name]
+    }
+
+    init_d { $name:
+      require => Mkdir_p[$dirs]
+    }
+
+    Build_and_install['varnish'] -> File[$default_varnish, $vcl_path]
+
+    /*
+    $ncsa_bin = "${bin_path}/varnishncsa"
+    $ncsa_pid = pid_path('varnishncsa')
+    $ncsa_log = "${log}/access.log"
+
+    logrotate_d { 'varnishncsa':
+      postrotate => 'service varnish rotate',
+      pattern => "${log}/access.log"
+    }
+    */
   }
 
-  mkdir_p { $dirs:
-    path => $base::path,
-    require => Build_and_install[$name]
-  }
-
-  exec { "${name} create-store-file":
-    command => "dd if=/dev/zero of=${store_file_path} bs=${store_file_size} count=1",
-    timeout => 0,
-    unless => "test -f ${store_file_path}",
-    path => $base::path,
-    require => Mkdir_p[$data],
-    logoutput => true
+  file { $default_varnish:
+    content => template("varnish/default"),
+    notify => Service[varnish]
   }
 
   file { $vcl_path:
     content => $vcl,
-    require => Build_and_install[$name]
+    notify => Service[varnish]
   }
+
+  mkdir_p { $cache_dir:
+    path => $base::path
+  }
+
+  service { varnish:
+    ensure => running,
+    require => File[$default_varnish, $vcl_path]
+  }
+
+  $varnish_start = "service varnish start"
+  $varnish_stop = "service varnish stop"
+  $varnish_rotate = "service varnish rotate"
 
   god_init { $name:
     start => $varnish_start,
@@ -61,31 +108,5 @@ class varnish($version, $vcl, $user = 'varnish', $group = 'varnish', $store_file
     interval => 10
   }
 
-  /* debian stuff */
-  if ($::osfamily == 'debian') {
-    user { $user: uid => 27835 }
-
-    $packages = [ 'libpcre3', 'libpcre3-dev', 'pkg-config' ]
-
-    package { $packages:
-      ensure => installed,
-      before => Build_and_install[$name]
-    }
-
-    exec { 'ensure-data-store-ownership':
-      command => "chown -R ${user}:${group} ${data}",
-      path => $base::path,
-      require => Exec["${name} create-store-file"]
-    }
-
-    logrotate_d { 'varnishncsa':
-      postrotate => 'service varnish rotate',
-      pattern => "${log}/access.log"
-    }
-  }
-
-  init_d { $name:
-    require => Mkdir_p[$dirs]
-  }
 }
 

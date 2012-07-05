@@ -1,10 +1,10 @@
-class ruby($version, $deb_url = '', $configure = "--disable-install-doc", $build_path = '') {
+class ruby($version = '', $deb_url = '', $configure = "--disable-install-doc", $build_path = '') {
   gem { [ 'bundler', 'penchant' ]:
     path => "${path}:${base::path}",
     ensure => present
   }
 
-  if ($deb_url) {
+  if ($::osfamily == 'debian') {
     $path = '/usr/bin'
 
     remotedeb { ruby:

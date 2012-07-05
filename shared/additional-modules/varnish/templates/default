@@ -1,0 +1,12 @@
+START=1
+
+DAEMON_OPTS=" \
+  -a :80 \
+  -T 127.0.0.1:6082 \
+  -f <%= vcl_path %> \
+  -s file,<%= cache_dir %>/cache,<%= store_file_size %>M \
+  -u nobody \
+  -g nogroup \
+  -w <%= scope.lookupvar('::processorcount') %>,<%= scope.lookupvar('::processorcount').to_i * 2 %>,600 \
+"
+
