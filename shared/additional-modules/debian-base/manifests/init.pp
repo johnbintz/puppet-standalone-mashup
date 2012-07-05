@@ -2,7 +2,7 @@ class basics {
   $packages = [
     "ntp", "ntpdate", "gcc", "curl",
     "build-essential", "patch", 'sysstat',
-    'git-core', 'vim'
+    'git-core', 'vim', 'libffi5'
   ]
 
   package { $packages: ensure => installed }
