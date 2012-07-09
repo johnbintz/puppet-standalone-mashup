@@ -1,5 +1,8 @@
 #!/bin/bash
 
+YAML_VERSION=0.1.4
+RUBY_VERSION=1.9.3-p194
+
 pwd=$PWD
 base_dir=<%= base_dir %>
 
@@ -10,26 +13,23 @@ if [ ! -f ${base_dir}/ruby-base/bin/ruby ]; then
 
   opt_dir=${base_dir}/tmp/ruby-opt
 
-  rm -Rf yaml-0.1.4*
-  curl -O http://pyyaml.org/download/libyaml/yaml-0.1.4.tar.gz
-  tar zxvf yaml-0.1.4.tar.gz
-  mv yaml-0.1.4 yaml-0.1.4-base
-  cd yaml-0.1.4-base
+  rm -Rf yaml-$YAML_VERSION*
+  curl http://pyyaml.org/download/libyaml/yaml-$YAML_VERSION.tar.gz > yaml.tar.gz
+  tar zxvf c$yaml.tar.gz
+  mv yaml-$YAML_VERSION yaml-$YAML_VERSION-base
+  cd yaml-$YAML_VERSION-base
   ./configure --prefix=${opt_dir}
   make
   make install
 
   cd ..
 
-  RUBY=ftp://ftp.ruby-lang.org/pub/ruby/ruby-1.9.3-p194.tar.bz2
-  RUBY_FILENAME=${RUBY##*/}
-  RUBY_VERSION=${RUBY_FILENAME%%.tar.bz2}
-  curl $RUBY > $RUBY_FILENAME
-  rm -Rf $RUBY_VERSION
-  tar jxvf $RUBY_FILENAME
-  mv $RUBY_VERSION "$RUBY_VERSION-base"
+  rm -Rf ruby-$RUBY_VERSION
+  curl ftp://ftp.ruby-lang.org/pub/ruby/ruby-$RUBY_VERSION.tar.bz2 > ruby.tar.bz2
+  tar jxvf ruby.tar.bz2
+  mv ruby-$RUBY_VERSION ruby-base
 
-  cd "$RUBY_VERSION-base"
+  cd ruby-base
 
   ./configure --prefix=${base_dir}/ruby-base --with-opt-dir=${opt_dir} --disable-pthread --disable-install-doc
   make
