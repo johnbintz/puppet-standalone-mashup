@@ -1,7 +1,17 @@
 require 'erb'
 
 Puppet::Type.type(:god_init).provide(:install) do
-  desc "Install a God script"
+  desc "Install a God script for a non-daemonized process"
+
+  def self.def_resources(*args)
+    args.each do |arg|
+      class_eval <<-RB
+        def #{arg}
+          @resource[:#{arg}] || ''
+        end
+      RB
+    end
+  end
 
   def create
     FileUtils.mkdir_p File.dirname(file)
@@ -21,57 +31,28 @@ Puppet::Type.type(:god_init).provide(:install) do
     ERB.new(config).result(binding)
   end
 
-  private
-  def file
-    File.join(@resource[:dir], "#{@resource[:name]}.god")
-  end
-
-  def start
-    @resource[:start] || ''
-  end
-
-  def stop
-    @resource[:stop] || ''
-  end
-
-  def restart
-    @resource[:restart] || ''
-  end
-
-  def name
-    @resource[:name] || ''
-  end
-
-  def pid_file
-    @resource[:pid_file] || ''
-  end
+  def_resources :start, :group, :name, :dir
 
   def interval
-    @resource[:interval] || 5
+    @resource[:interval] || 30
+  end
+
+  private
+  def file
+    File.join(dir, "#{name}.god")
   end
 
   def config
     <<-GOD
 God.watch do |w|
   w.name = "<%= name %>"
+  <% if !group.empty? %>
+    w.group = "<%= group %>"
+  <% end %>
+
   w.interval = <%= interval %>.seconds
 
-  w.start = lambda { system("<%= start %>") }
-  w.start_grace = <%= interval %>.seconds
-
-  <% if !stop.empty? %>
-    w.stop = lambda { system("<%= stop %>") ; system("killall -9 <%= name %>") }
-  <% end %>
-
-  <% if !restart.empty? %>
-    w.restart = lambda { system("<%= restart %>") }
-  <% end %>
-
-  <% if pid_file %>
-    w.pid_file = "<%= pid_file %>";
-  <% else %>
-    w.behavior(:clean_pid_file)
-  <% end %>
+  w.start = %{<%= start %>}
 
   w.start_if do |start|
     start.condition(:process_running) do |c|
