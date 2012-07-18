@@ -2,10 +2,8 @@ Puppet::Type.type(:configure).provide(:action) do
   desc "Configure a program to install"
 
   def create
-    command = %{bash -c "env ; sleep 10 ; cd #{@resource[:build_path]} && #{@resource[:preconfigure].gsub('"', '\\"')} #{path} ./configure --prefix=#{@resource[:install_path]} #{@resource[:options]}"}.tap { |o| p o }
+    command = %{bash -c "cd #{@resource[:build_path]} && #{@resource[:preconfigure].gsub('"', '\\"')} #{path} ./configure --prefix=#{@resource[:install_path]} #{@resource[:options]}"}.tap { |o| p o }
     system command
-    p $?
-    puts command
     raise StandardError.new("Could not configure") if $?.exitstatus != 0
   end
 
@@ -14,7 +12,7 @@ Puppet::Type.type(:configure).provide(:action) do
   end
 
   def exists?
-    return true if unless?
+    return unless? if unless? != nil
 
     File.file?(config_status)
   end

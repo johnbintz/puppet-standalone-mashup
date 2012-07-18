@@ -17,7 +17,7 @@ Puppet::Type.type(:make_and_install).provide(:action) do
   end
 
   def exists?
-    return true if unless?
+    return unless? if unless? != nil
 
     File.directory?(@resource[:install_path]) && File.symlink?(symlink_path)
   end

@@ -15,7 +15,7 @@ Puppet::Type.type(:download_and_unpack).provide(:action) do
   end
 
   def exists?
-    return true if unless?
+    return unless? if unless? != nil
 
     File.directory?(File.join(@resource[:src_path], target_dir))
   end
