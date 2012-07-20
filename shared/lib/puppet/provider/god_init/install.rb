@@ -51,15 +51,8 @@ God.watch do |w|
   <% end %>
 
   w.interval = <%= interval %>.seconds
-
   w.start = %{<%= start %>}
-
-  w.start_if do |start|
-    start.condition(:process_running) do |c|
-      c.interval = <%= interval %>.seconds
-      c.running = false
-    end
-  end
+  w.keepalive
 end
 GOD
   end

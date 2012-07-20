@@ -3,6 +3,7 @@ class varnish($version = '', $vcl, $user = 'varnish', $group = 'varnish') {
     $config = '/etc/varnish'
 
     $default_varnish = '/etc/default/varnish'
+    $bin = "/usr/sbin/varnishd"
   } else {
     $install_path = install_path($name, $version)
     $config = config_path($name)
@@ -35,6 +36,16 @@ class varnish($version = '', $vcl, $user = 'varnish', $group = 'varnish') {
       require => [
         Debsource['varnish'], Mkdir_p[$cache_dir]
       ]
+    }
+
+    service { varnish:
+      ensure => stopped,
+      require => Package[varnish]
+    }
+
+    exec { 'update-rc.d -f varnish remove':
+      path => $::base::path,
+      require => Package[varnish]
     }
 
     $store_file_size = dir_size($cache_root)
@@ -76,37 +87,24 @@ class varnish($version = '', $vcl, $user = 'varnish', $group = 'varnish') {
 
   file { $default_varnish:
     content => template("varnish/default"),
-    notify => Service[varnish]
+    notify => Service['god']
   }
 
   file { $vcl_path:
     content => $vcl,
-    notify => Service[varnish]
+    notify => Service['god']
   }
 
   mkdir_p { $cache_dir:
     path => $base::path
   }
 
-  service { varnish:
-    ensure => running,
-    require => File[$default_varnish, $vcl_path]
-  }
-
-  $varnish_start = "service varnish start"
-  $varnish_stop = "service varnish stop"
-  $varnish_rotate = "service varnish rotate"
-
   god_init { $name:
-    start => $varnish_start,
-    stop => $varnish_stop,
+    start => "${bin} -T 127.0.0.1:6082 -F -u ${user} -g ${group} -w 1,1,3600 -f ${vcl_path} -s file,${cache_dir}/varnish",
     dir => config_path('god.d'),
-    restart => "${varnish_stop} && ${varnish_start}",
-    pid_file => $pid,
     ensure => present,
     require => File[$vcl_path],
     interval => 10
   }
-
 }
 
