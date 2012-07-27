@@ -51,7 +51,8 @@ class squid($version = '', $user = 'proxy', $group = 'proxy', $config_template, 
     path => $base::path
   }
 
-  exec { "chown -R ${user}:${group} ${log_dir}":
+  exec { log_dir_params:
+    command => "chown -R ${user}:${group} ${log_dir}",
     path => $::base::path,
     require => Mkdir_p[$log_dir]
   }
@@ -65,7 +66,7 @@ class squid($version = '', $user = 'proxy', $group = 'proxy', $config_template, 
   exec { 'squid-cache':
     command => "${sbin}/squid3 -z",
     logoutput => true,
-    require => Exec['cache_dir_perms'],
+    require => Exec[cache_dir_perms, log_dir_params],
     path => $::base::path
   }
 
