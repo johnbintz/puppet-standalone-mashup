@@ -15,7 +15,7 @@ if [ ! -f ${base_dir}/ruby-base/bin/ruby ]; then
 
   rm -Rf yaml-$YAML_VERSION*
   curl http://pyyaml.org/download/libyaml/yaml-$YAML_VERSION.tar.gz > yaml.tar.gz
-  tar zxvf c$yaml.tar.gz
+  tar zxvf yaml.tar.gz
   mv yaml-$YAML_VERSION yaml-$YAML_VERSION-base
   cd yaml-$YAML_VERSION-base
   ./configure --prefix=${opt_dir}
@@ -49,5 +49,4 @@ if [ ! -f ${base_dir}/ruby-base/bin/puppet ]; then
 fi
 
 mkdir -p ~/.puppet
-cd /tmp/puppet
-./apply
+

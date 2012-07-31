@@ -59,12 +59,20 @@ Capistrano::Configuration.instance.load do
     top.copy_skel
   end
 
+  def as_user(cmd)
+    if use_sudo
+      %{#{sudo} su -c "#{cmd}" #{user}}
+    else
+      cmd
+    end
+  end
+
   desc "Apply the configuration"
   task :apply do
     top.copy_files
     top.rename if rename_server && wrong_server_name?
 
-    run "cd #{puppet_dir} && #{sudo} ./apply"
+    run "cd #{puppet_dir} && #{as_user("./apply")}"
   end
 
   def wrong_server_name?
@@ -76,12 +84,12 @@ Capistrano::Configuration.instance.load do
     top.copy_files
     top.rename if rename_server
 
-    run "cd #{puppet_dir} && #{sudo} ./bootstrap"
-    top.reboot
+    run "cd #{puppet_dir} && #{as_user("./bootstrap")}"
+    top.bootstrap_reboot
   end
 
   desc "Reboot the server after bootstrapping"
-  task :reboot do
+  task :bootstrap_reboot do
     run "#{sudo} shutdown -r now"
   end
 
