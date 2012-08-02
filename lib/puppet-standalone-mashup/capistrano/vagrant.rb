@@ -6,6 +6,7 @@ Capistrano::Configuration.instance.load do
   set(:user) { 'vagrant' }
   set(:password) { 'vagrant' }
   set(:use_sudo) { true }
+  set(:run_as_user) { false }
 
   task :ensure_puppet do
     require 'socket'

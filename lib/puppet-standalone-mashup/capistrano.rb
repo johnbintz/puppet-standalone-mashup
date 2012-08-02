@@ -33,6 +33,7 @@ Capistrano::Configuration.instance.load do
 
   _cset(:rename_server) { true }
   _cset(:use_sudo) { true }
+  _cset(:run_as_user) { false }
   _cset(:additional_modules) { [] }
   _cset(:additional_puppet_options) { '' }
 
@@ -61,7 +62,11 @@ Capistrano::Configuration.instance.load do
 
   def as_user(cmd)
     if use_sudo
-      %{#{sudo} su -c "#{cmd}" #{user}}
+      if run_as_user
+        %{#{sudo} su -c "#{cmd}" #{user}}
+      else
+        %{#{sudo} #{cmd}}
+      end
     else
       cmd
     end

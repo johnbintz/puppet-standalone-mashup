@@ -67,6 +67,7 @@ class squid($version = '', $user = 'proxy', $group = 'proxy', $config_template, 
     command => "${sbin}/squid3 -z",
     logoutput => true,
     require => Exec[cache_dir_perms, log_dir_params],
+    unless => "test -d ${cache_dir}/00",
     path => $::base::path
   }
 
