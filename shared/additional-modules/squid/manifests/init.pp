@@ -7,6 +7,7 @@ class squid($version = '', $user = 'proxy', $group = 'proxy', $config_template, 
     $sbin = '/usr/sbin'
 
     package { 'squid3': ensure => latest }
+    package { 'squidclient': ensure => latest }
 
     service { squid3:
       ensure => stopped,
