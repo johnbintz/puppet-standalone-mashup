@@ -166,5 +166,20 @@ Capistrano::Configuration.instance.load do
   def with_additional_puppet_bin_path
     additional_puppet_bin_path ? %{PATH="#{additional_puppet_bin_path}:$PATH"} : ''
   end
+
+  desc "Get managing user's public key"
+  task :public_key do
+    as_user = ->(command) { %{sudo -u #{user} -- #{command}} }
+
+    key = capture(as_user.("cat ~/.ssh/id_dsa.pub 2>/dev/null ; true"))
+    if key.empty?
+      if Capistrano::CLI.ui.ask("No key found. Generate a key?")
+        run as_user.("ssh-keygen -f ~/.ssh/id_dsa -t dsa -N ''")
+        key = capture(as_user("cat ~/.ssh/id_dsa.pub"))
+      end
+    end
+
+    $stdout.puts "\n#{key}\n"
+  end
 end
 

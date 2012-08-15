@@ -2,6 +2,14 @@ Puppet::Type.type(:git).provide(:clone) do
   desc "Clone/pull a git repo"
 
   def create
+    p ENV
+
+    system key_check_command
+
+    if $?.exitstatus != 0
+      system keyscan_command
+    end
+
     if File.directory?(path)
       Dir.chdir(path) { system git_command("pull origin master") }
     else
@@ -19,9 +27,25 @@ Puppet::Type.type(:git).provide(:clone) do
 
   private
   def git_command(what)
-    user_switch = @resource[:user] ? "sudo -u #{@resource[:user]} -- " : ""
+    path_wrap("git #{what}")
+  end
 
-    %{bash -c 'PATH=#{@resource[:path]} #{user_switch} git #{what}'}
+  def keyscan_command
+    path_wrap("ssh-keyscan -t dsa,rsa #{@resource[:host]} >> ~/.ssh/known_hosts")
+  end
+
+  def key_check_command
+    path_wrap("ssh-keygen -F #{@resource[:host]}")
+  end
+
+  def path_wrap(command)
+    command = %{PATH=#{@resource[:path]} #{command}}
+
+    if @resource[:user]
+      command = %{su -c "#{command}" #{@resource[:user]}}
+    end
+
+    command.tap { |o| p o }
   end
 
   def path

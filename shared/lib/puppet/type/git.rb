@@ -22,5 +22,9 @@ Puppet::Type.newtype(:git) do
   newparam(:user) do
     desc "The user to perform the command as"
   end
+
+  newparam(:host) do
+    desc "The host to connect to"
+  end
 end
 
