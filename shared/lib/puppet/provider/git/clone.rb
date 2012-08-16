@@ -2,8 +2,6 @@ Puppet::Type.type(:git).provide(:clone) do
   desc "Clone/pull a git repo"
 
   def create
-    p ENV
-
     system key_check_command
 
     if $?.exitstatus != 0
@@ -45,7 +43,7 @@ Puppet::Type.type(:git).provide(:clone) do
       command = %{su -c "#{command}" #{@resource[:user]}}
     end
 
-    command.tap { |o| p o }
+    command
   end
 
   def path
