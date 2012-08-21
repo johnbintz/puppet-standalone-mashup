@@ -41,6 +41,8 @@ Puppet::Type.type(:git).provide(:clone) do
 
     if @resource[:user]
       command = %{su -c "#{command}" #{@resource[:user]}}
+    else
+      command = %{sh -c "#{command}"}
     end
 
     command
