@@ -72,6 +72,11 @@ class squid($version = '', $user = 'proxy', $group = 'proxy', $config_template, 
     path => $::base::path
   }
 
+  file { "${sbin}/clear-squid-cache":
+    content => template('squid/clear-squid-cache'),
+    mode => 0755
+  }
+
   exec { 'cache_dir_perms_again':
     command => "chown -R ${user}:${group} ${cache_dir}",
     path => $::base::path,

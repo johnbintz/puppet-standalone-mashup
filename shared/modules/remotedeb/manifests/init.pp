@@ -3,7 +3,7 @@ define remotedeb($url, $version) {
 
   exec { "remotedeb-${name}":
     command => "curl -o ${deb} ${url} && dpkg -i ${deb}",
-    unless => "test $(dpkg -l ${name} | grep ${version} | wc -l) -eq 0",
+    unless => "test $(dpkg -l ${name} | grep ${version} | wc -l) -ne 0",
     path => $base::path
   }
 }

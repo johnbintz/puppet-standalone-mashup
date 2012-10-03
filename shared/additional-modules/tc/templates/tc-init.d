@@ -1,4 +1,4 @@
-<%= scope.function_template('base/init-d-header') %>
+<%= scope.function_template([ 'base/init-d-header' ]) %>
 
 <%= init_d_prolog %>
 <%= init_d_prerun %>
@@ -19,5 +19,5 @@ stop() {
   echo "done"
 }
 
-<%= scope.function_template('base/init-d-actions') %>
+<%= scope.function_template([ 'base/init-d-actions' ]) %>
 

@@ -5,7 +5,7 @@ class god {
     require => Class['ruby']
   }
 
-  $bin = "${ruby::path}//god"
+  $bin = "${ruby::path}/god"
   $dir = config_path("god.d")
   $pid = pid_path($name)
   $log = log_path($name)
