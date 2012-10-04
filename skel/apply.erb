@@ -5,8 +5,8 @@ RUBYLIB="${PWD}/lib:${PWD}/shared/lib" \
   <%= with_additional_puppet_bin_path %> \
   puppet apply <%= additional_puppet_options %> \
   --confdir=$PWD \
-  --modulepath=$PWD/modules:$PWD/shared/modules:$PWD/shared/additional-modules \
-  --templatedir=$PWD/shared/templates:$PWD/templates \
+  --modulepath=$PWD/modules:$PWD/shared/modules \
+  --templatedir=$PWD/templates:$PWD/shared/templates \
   -v --no-report $@ \
   manifests/site.pp
 

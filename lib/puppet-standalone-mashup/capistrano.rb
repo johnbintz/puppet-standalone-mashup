@@ -1,13 +1,10 @@
 require 'erb'
+require 'puppet-standalone-mashup'
 
 def _cset(name, *args, &block)
   unless exists?(name)
     set(name, *args, &block)
   end
-end
-
-module PuppetStandaloneMashup
-  BASE = Pathname(File.expand_path('../../..', __FILE__))
 end
 
 require 'capistrano/command'
@@ -117,19 +114,33 @@ Capistrano::Configuration.instance.load do
     end
   end
 
+  def upload_directory_safely(source, target, options = {})
+    run "mkdir -p #{target}"
+
+    Dir["#{source}/*"].each do |child|
+      top.upload child, File.join(target, File.basename(child)), options
+    end
+  end
+
   desc "Copy skel files to remote server"
   task :copy_skel do
     top.ensure_puppet_dir
 
-    [ '*.erb', "#{distribution}/*.erb" ].each do |dir|
-      Dir[PuppetStandaloneMashup::BASE.join('skel').join(dir).to_s].each do |file|
-        data = StringIO.new(ERB.new(File.read(file)).result(binding))
+    targets = []
 
-        top.upload data, target = File.join(puppet_dir, File.basename(file, '.erb'))
+    PuppetStandaloneMashup.paths_for('skel').each do |path|
+      [ '*.erb', "#{distribution}/*.erb" ].each do |dir|
+        Dir[path.join(dir).to_s].each do |file|
+          data = StringIO.new(ERB.new(File.read(file)).result(binding))
 
-        run "chmod a+x #{target}"
+          top.upload data, target = File.join(puppet_dir, File.basename(file, '.erb'))
+
+          targets << target
+        end
       end
     end
+
+    run "chmod a+x #{targets.join(' ')}"
   end
 
   desc "Copy shared"
@@ -138,8 +149,8 @@ Capistrano::Configuration.instance.load do
 
     run "mkdir -p #{puppet_dir}/shared/additional-modules"
 
-    (%w{lib modules templates} + additional_modules.collect { |dir| "additional-modules/#{dir}" }).each do |dir|
-      top.upload PuppetStandaloneMashup::BASE.join('shared', dir).to_s, File.join(puppet_dir, 'shared', dir)
+    PuppetStandaloneMashup.configuration.shared_paths.each do |path|
+      upload_directory_safely path.to_s, File.join(puppet_dir, 'shared', path.target)
     end
   end
 
@@ -164,7 +175,7 @@ Capistrano::Configuration.instance.load do
   end
 
   def with_additional_puppet_bin_path
-    additional_puppet_bin_path ? %{PATH="#{additional_puppet_bin_path}:$PATH"} : ''
+    "PATH=" + (PuppetStandaloneMashup.configuration.bin_path + [ "$PATH" ]).join(':')
   end
 
   desc "Get managing user's public key"

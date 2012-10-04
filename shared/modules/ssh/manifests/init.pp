@@ -5,7 +5,8 @@ define ssh {
     ensure => directory,
     mode => '0700',
     owner => $name,
-    group => $name
+    group => $name,
+    require => User[$name]
   }
 
   file { "${ssh_dir}/authorized_keys":
